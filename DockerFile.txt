@@ -1,0 +1,5 @@
+FROM python
+RUN pip install numpy
+RUN pip install pandas
+COPY . /src
+CMD ["python", "/Trades.py"]
