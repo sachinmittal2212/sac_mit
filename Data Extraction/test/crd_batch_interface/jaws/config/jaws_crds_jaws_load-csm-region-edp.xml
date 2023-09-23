@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../validator/validate.xsd"?>
+<Configuration>
+	<Source>
+		<Database>
+			<Snowflake>
+                <UserName>DEVESGIC_SERVICE_USER</UserName>
+                <SecretManager></SecretManager>
+                <Account>ivz_dev.us-east-1.privatelink</Account>
+                <Schema>ESGIC</Schema>
+                <Role>DEVESGIC_SERVICE_USER</Role>
+                <Database>DEVESGIC</Database>
+                <Warehouse>DEV_ESG_WH_SR</Warehouse>
+            </Snowflake>
+			<Query>SELECT RGN_CD,RGN_NAME,DESCRIPTION FROM {ENV}SDD.SREFSD.VW_DIM_REGION</Query>
+		</Database>
+	</Source>
+	<OutputConfig>
+		<ExceptionHandling>
+			<Severity>2</Severity>
+			<Nullility>
+				<Column_Pos>0</Column_Pos>
+			</Nullility>
+			<S3>
+				<FileConfig>
+					<FileType>csv</FileType>
+					<FileName>jaws_crds_jaws_load-csm-region-edp</FileName>
+					<DateFormat></DateFormat>
+					<Delimiter>,</Delimiter>
+					<Index>True</Index>
+					<Header>0</Header>
+				</FileConfig>
+				<Location>crd_batch_interface/jaws/exception</Location>
+			</S3>
+			<Email>
+				<To></To>
+				<Subject></Subject>
+				<Body></Body>
+			</Email>
+		</ExceptionHandling>
+		<ModifyExtract>false</ModifyExtract>
+		</OutputConfig>
+	<Destination>
+		<Database>
+			<MSSQLServer>
+				<Server>USHOUSQLPTW02VD.corpdev.dev</Server>
+				<UserName>APPID_ALTERYX_JAWS</UserName>
+                <SecretManager></SecretManager>
+				<Database>APP_ETT</Database>
+			</MSSQLServer>
+			<TableName>dbo.LoadCsmRegionEDP</TableName>
+			<Truncate>true</Truncate>
+		</Database>
+	</Destination>
+</Configuration>

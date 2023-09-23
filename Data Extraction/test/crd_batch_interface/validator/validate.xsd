@@ -1,0 +1,331 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="Configuration" type="ConfigurationType"/>
+
+  <xs:complexType name="SecretManagerType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="Name" minOccurs="0"/>
+      <xs:element type="xs:string" name="Region" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PasswordType">
+    <xs:sequence>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SnowflakeType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="UserName"/>
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:element type="SecretManagerType" name="SecretManager" minOccurs="0"/>
+        <xs:element type="xs:string" name="Password" minOccurs="0"/>
+      </xs:choice>
+      <xs:element type="xs:string" name="Account"/>
+      <xs:element type="xs:string" name="Schema"/>
+      <xs:element type="xs:string" name="Role"/>
+      <xs:element type="xs:string" name="Database"/>
+      <xs:element type="xs:string" name="Warehouse"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="MSSQLServerType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="Server"/>
+      <xs:element type="xs:string" name="UserName"/>
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:element type="SecretManagerType" name="SecretManager" minOccurs="0"/>
+        <xs:element type="xs:string" name="Password" minOccurs="0"/>
+      </xs:choice>
+      <xs:element type="xs:string" name="Database"/>
+      <xs:element type="xs:string" name="Others" minOccurs="0"/>
+      <xs:element type="xs:string" name="Multithread" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="OracleType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="HostName"/>
+      <xs:element type="xs:string" name="UserName"/>
+      <xs:choice minOccurs="0" maxOccurs="1">
+        <xs:element type="SecretManagerType" name="SecretManager" minOccurs="0"/>
+        <xs:element type="xs:string" name="Password" minOccurs="0"/>
+      </xs:choice>
+      <xs:element type="xs:string" name="Database"/>
+      <xs:element type="xs:string" name="Port"/>
+      <xs:element type="xs:string" name="Others" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PostLoadType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="QueryS3Location" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PreLoadType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="QueryS3Location" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DatabaseType">
+    <xs:sequence>
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:element type="SnowflakeType" name="Snowflake" minOccurs="0"/>
+        <xs:element type="MSSQLServerType" name="MSSQLServer" minOccurs="0"/>
+        <xs:element type="OracleType" name="Oracle" minOccurs="0"/>
+        <xs:element type="xs:string" name="Alias" minOccurs="0"/>
+      </xs:choice>
+      <xs:element type="PreLoadType" name="OnStart" minOccurs="0"/>
+      <xs:element type="PostLoadType" name="OnFinish" minOccurs="0"/>
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:element type="xs:string" name="Query" minOccurs="0"/>
+        <xs:element type="xs:string" name="Execute" minOccurs="0"/>
+        <xs:element type="xs:string" name="TableName" minOccurs="0"/>
+        <xs:element type="xs:string" name="QueryS3Location" minOccurs="0"/>
+      </xs:choice>
+      <xs:element type="xs:integer" name="ChunkSize" minOccurs="0"/>
+      <xs:element type="xs:string" name="Truncate" minOccurs="0"/>
+      <xs:element type="UpdateType" name="Update" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RuntimeType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="Constant" minOccurs="0"/>
+      <xs:element type="xs:string" name="DatetimeFormat" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ColumnType">
+    <xs:sequence>
+      <xs:element type="xs:byte" name="Index"/>
+      <xs:element type="xs:string" name="Name"/>
+      <xs:element type="xs:string" name="Datatype"/>
+      <xs:element type="xs:string" name="SrcColumnName"/>
+      <xs:element type="xs:string" name="Format" minOccurs="0"/>
+      <xs:element type="xs:string" name="Footer" minOccurs="0"/>
+      <xs:element type="xs:string" name="CharLimit" minOccurs="0"/>
+      <xs:element type="xs:string" name="Precision" minOccurs="0"/>
+      <xs:element type="RuntimeType" name="RuntimeCreation" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IMFTType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="UserName" />
+      <xs:element type="xs:string" name="SecretManager" minOccurs="1"/>
+      <xs:element type="FileConfigType" name="FileConfig" minOccurs="1"/>
+      <xs:element type="xs:string" name="Location" />
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="LocalType">
+    <xs:sequence>
+      <xs:element type="FileConfigType" name="FileConfig" minOccurs="1"/>
+      <xs:element type="xs:string" name="Location" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="S3Type">
+    <xs:sequence>
+      <xs:element type="FileConfigType" name="FileConfig" minOccurs="1"/>
+      <xs:element type="xs:string" name="Location" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PrimaryType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="Column_Pos" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NAValuesType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="Value" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NotNullType">
+    <xs:sequence>
+      <xs:element type="xs:byte" name="Column_Pos" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AttachmentType">
+    <xs:sequence>
+      <xs:element type="FileConfigType" name="FileConfig" minOccurs="0"/>
+      <xs:element type="xs:string" name="BodyTemplate" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="EmailType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="To" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:string" name="CC" minOccurs="0" />
+      <xs:element type="xs:string" name="Subject" minOccurs="0"/>
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:element type="AttachmentType" name="Attachment" minOccurs="0"/>
+        <xs:element type="xs:string" name="BodyTemplate" minOccurs="0"/>
+        <xs:element type="xs:string" name="BodyContent" minOccurs="0"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="UpdateStmtType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="Table" minOccurs="0"/>
+      <xs:element type="xs:string" name="Set" minOccurs="0"/>
+      <xs:element type="xs:string" name="Condition" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="UpdateType">
+    <xs:sequence>
+      <xs:element type="UpdateStmtType" name="Statement" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="ExceptionType">
+    <xs:sequence>
+      <xs:element name="Severity" minOccurs="1" maxOccurs="1">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte">
+            <xs:enumeration value="1"/>
+            <xs:enumeration value="2"/>
+            <xs:enumeration value="3"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="PrimaryType" name="Primary" minOccurs="0"/>
+      <xs:element type="NotNullType" name="Nullility" minOccurs="0"/>
+      <xs:element type="xs:string" name="NoData" minOccurs="0"/>
+      <xs:element type="S3Type" name="S3" minOccurs="0"/>
+      <xs:element type="EmailType" name="Email" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="FileConfigType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="FileType"/>
+      <xs:element type="xs:string" name="FileName" />
+      <xs:element type="xs:string" name="DateFormat" minOccurs="0"/>
+      <xs:element type="xs:string" name="DateOffset" minOccurs="0"/>
+      <xs:element type="xs:string" name="Delimiter" />
+      <xs:element type="xs:string" name="Index" minOccurs="0"/>
+      <xs:element type="xs:string" name="Header" minOccurs="0"/>
+      <xs:element type="xs:byte" name="SkipTopRows" minOccurs="0"/>
+      <xs:element type="xs:byte" name="SkipBottomRows" minOccurs="0"/>
+      <xs:element type="NAValuesType" name="NAValues" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="FileColumnsType">
+    <xs:sequence>
+      <xs:element type="ColumnType" name="Column" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InputType">
+    <xs:sequence>
+      <xs:element type="S3Type" name="S3" minOccurs="0"/>
+      <xs:element type="xs:boolean" name="ModifyExtract"/>
+      <xs:element type="FileColumnsType" name="ColumnDetails" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="OutputType">
+    <xs:sequence>
+      <xs:element type="xs:boolean" name="ModifyExtract"/>
+      <xs:element type="FileColumnsType" name="ColumnDetails" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ArchiveType">
+    <xs:sequence>
+        <xs:element type="xs:string" name="Location" minOccurs="0"/>
+        <xs:element type="xs:string" name="FileName" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CRDAPIAdaptorType">
+    <xs:sequence>
+        <xs:element type="xs:string" name="Environment" minOccurs="0"/>
+        <xs:element type="xs:string" name="ResultsetJson" minOccurs="0"/>
+        <xs:element type="xs:string" name="XMLLocation" minOccurs="0"/>
+        <xs:element type="xs:string" name="ExecutionType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SourceType">
+    <xs:sequence>
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:element type="xs:string" name="Alias" minOccurs="0"/>
+        <xs:element type="xs:string" name="Name" minOccurs="0"/>
+        <xs:element type="DatabaseType" name="Database" minOccurs="0"/>
+        <xs:element type="S3Type" name="S3" minOccurs="0"/>
+        <xs:element type="IMFTType" name="IMFT" minOccurs="0"/>
+        <xs:element type="LocalType" name="On-prem" minOccurs="0"/>
+        <xs:element type="ArchiveType" name="Archive" minOccurs="0"/>
+        <xs:element type="CRDAPIAdaptorType" name="CRDAPIAdaptor" minOccurs="0"/>
+        <xs:element type="EmailType" name="Email" minOccurs="0"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ColType">
+    <xs:sequence>
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:element type="xs:string" name="Column" minOccurs="1"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="HeaderType">
+    <xs:sequence>
+      <xs:choice minOccurs="1" maxOccurs="unbounded" >
+        <xs:element type="xs:string" name="Alias" />
+        <xs:element type="xs:string" name="Name" />
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="JoinerType">
+    <xs:sequence>
+      <xs:choice minOccurs="1" maxOccurs="unbounded" >
+        <xs:element type="xs:string" name="Name" minOccurs="1" />
+        <xs:element type="SourceType" name="Source1" /> 
+        <xs:element type="SourceType" name="Source2" />
+        <xs:element type="xs:string" name="Type" />
+        <xs:element type="xs:string" name="JoinCondition" />
+        <xs:element type="xs:string" name="Columns" minOccurs="0"/>
+        <xs:element type="xs:string" name="ColumnHeader" minOccurs="0"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="TransformationType">
+    <xs:sequence>
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:element type="HeaderType" name="Header" minOccurs="0"/>
+        <xs:element type="JoinerType" name="Joiner" minOccurs="0"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ConfigurationType">
+    <xs:sequence>
+      <xs:element type="SourceType" name="Source"/>
+      <xs:element type="InputType" name="InputConfig" minOccurs="0"/>
+      <xs:element type="OutputType" name="OutputConfig" minOccurs="0"/>
+      <xs:element type="TransformationType" name="Transformation" minOccurs="0"/>
+      <xs:element type="ExceptionType" name="Validation" minOccurs="0"/>
+      <xs:element type="SourceType" name="Destination"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

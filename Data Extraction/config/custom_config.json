@@ -1,0 +1,30 @@
+{
+  "Environment-Variable":{
+    "dev":{
+      "IMFT_URL":"securedata-uat.ops.invesco.net",
+      "AWS_ACCOUNT_CODE":"782258485841",
+      "AWS_SECRET_MANAGER":"/0065/dev/crdbatch_secret-rto1Jh",
+      "ENV":"dev",
+      "sn_account":"ivz_dev",
+      "LOG_LEVEL":"DEBUG",
+      "CRD_SAAS_EQALTS_CAA":"oms-crdapi-adapter-eqalt-services",
+      "QA_BUCKET": "ivz-dev-0065-cbf-test-ue1"
+    },
+    "uat":{
+      "IMFT_URL":"securedata-uat.ops.invesco.net",
+      "AWS_ACCOUNT_CODE":"166562811506",
+      "AWS_SECRET_MANAGER":"/0065/uat/crdbatch_secret-8WP3Bj",
+      "ENV":"uat",
+      "sn_account":"ivz_uat",
+      "CRD_SAAS_EQALTS_CAA":"oms-crdapi-adapter-eqalt-services"
+    },
+    "prd":{
+      "IMFT_URL":"securedata-uat.ops.invesco.net",
+      "AWS_ACCOUNT_CODE":"342122720323",
+      "AWS_SECRET_MANAGER":"/0065/prd/crdbatch_secret-EvCEZa",
+      "ENV":"prd",
+      "sn_account":"ivz_prod"
+    }
+  },
+  "Memory_Size": 10240
+}

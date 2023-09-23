@@ -1,0 +1,8 @@
+<Scheduler>
+    <Process>
+        <Cron>01 * * * *</Cron>
+        <NextRun>2022-07-16 13:01:00</NextRun>
+        <Name>crd_batch_interface/jaws/config/jaws_crds_jaws_csm_code</Name>
+        <OtherParam>None</OtherParam>
+    </Process>
+</Scheduler>

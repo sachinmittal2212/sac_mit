@@ -1,0 +1,43 @@
+LambdaConfigVersion: '1.0'
+Description: Config file to deploy a Lambda Function using the cft pipe
+
+shared:
+  Parameters:
+    ImageUri: ${AWSACCTCODE}.dkr.ecr.us-east-1.amazonaws.com/ivz-0065-crd-dataextract-lambda-image:latest
+    FunctionName: crd-dataextract
+    Description: Lambda CFT Pipe for CRD Batch Interface 
+    Handler: app.handler
+    ApplicationCI: Event Poller
+    CostCenter: 7114NYC
+    Domain: '0065'
+    Owner: Sachin.Mittal@invesco.com
+    Requester: Sachin.Mittal@invesco.com
+    InfrastructureSupport: Sachin.Mittal@invesco.com
+    AppEnv: $APPENV
+    VPCRequired: 'true'
+    # CustomPolicy1: ${CustomPolicy1} 
+
+  Tags:
+    Requestor: Sachin.Mittal@invesco.com
+    Owner: Sachin.Mittal@invesco.com
+    CostCenter: 7114NYC
+    AppEnv: $APPENV
+    ApplicationCI: Event Poller
+    InfrastructureSupport: Sachin.Mittal@invesco.com
+    Domain: '0065'
+
+dev:
+  Parameters:
+    AppEnv: $APPENV
+    CustomPolicy1: "arn:aws:iam::${AWSACCTCODE}:policy/ivz-${APPENV}-0065-lambda-service-policy"
+    EnvLambda: '{"ENV":"dev","sn_account":"ivz_dev","AWS_SECRET_MANAGER":"/0065/dev/crdbatch_secret-rto1Jh", "AWS_ACCOUNT_CODE":"782258485841"}'
+    
+uat:
+  Parameters:
+    AppEnv: $APPENV
+    EnvLambda: '{"ENV":"uat","sn_account":"ivz_uat","AWS_SECRET_MANAGER":"/0065/uat/crdbatch_secret-8WP3Bj", "AWS_ACCOUNT_CODE":"166562811506"}'
+
+prd:
+  Parameters:
+    AppEnv: $APPENV
+    EnvLambda: '{"ENV":"prd","sn_account":"ivz_prd","AWS_SECRET_MANAGER":"/0065/prd/crdbatch_secret-EvCEZa", "AWS_ACCOUNT_CODE":"342122720323"}'

@@ -1,0 +1,126 @@
+{
+  "S3Trigger": {
+    "LambdaFunctionConfigurations": [
+      {
+        "Id": "IC",
+        "Events": ["s3:ObjectCreated:*"],
+        "Filter": {
+          "Key": {
+            "FilterRules": [
+              {
+                "Name": "prefix",
+                "Value": "crd_batch_interface/ic/input/"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "Id": "JAWS",
+        "Events": ["s3:ObjectCreated:*"],
+        "Filter": {
+          "Key": {
+            "FilterRules": [
+              {
+                "Name": "prefix",
+                "Value": "crd_batch_interface/jaws/input/"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "Id": "FI",
+        "Events": ["s3:ObjectCreated:*"],
+        "Filter": {
+          "Key": {
+            "FilterRules": [
+              {
+                "Name": "prefix",
+                "Value": "crd_batch_interface/fi/input/"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "Id": "IEQ",
+        "Events": ["s3:ObjectCreated:*"],
+        "Filter": {
+          "Key": {
+            "FilterRules": [
+              {
+                "Name": "prefix",
+                "Value": "crd_batch_interface/investments-equity/input/"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "Id": "QA",
+        "Events": ["s3:ObjectCreated:*"],
+        "Filter": {
+          "Key": {
+            "FilterRules": [
+              {
+                "Name": "prefix",
+                "Value": "crd_batch_interface/QA/input/"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "Id": "SFA",
+        "Events": ["s3:ObjectCreated:*"],
+        "Filter": {
+          "Key": {
+            "FilterRules": [
+              {
+                "Name": "prefix",
+                "Value": "crd_batch_interface/sfa/input/"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "Policy": [
+    {
+      "StatementID": "S3",
+      "Action": "lambda:InvokeFunction",
+      "Principal": "s3.amazonaws.com",
+      "SourceArnName": "crd-batch-ue1"
+    }
+  ],
+  "Environment-Variable":{
+    "dev":{
+      "IMFT_URL":"securedata-uat.ops.invesco.net",
+      "AWS_ACCOUNT_CODE":"782258485841",
+      "AWS_SECRET_MANAGER":"/0065/dev/crdbatch_secret-rto1Jh",
+      "ENV":"dev",
+      "sn_account":"ivz_dev",
+      "CRD_ASOF_CAA":"oms-crdapi-adapter-craobtst-services",
+      "QA_BUCKET": "ivz-dev-0065-cbf-test-ue1"
+    },
+    "uat":{
+      "IMFT_URL":"securedata-uat.ops.invesco.net",
+      "AWS_ACCOUNT_CODE":"166562811506",
+      "AWS_SECRET_MANAGER":"/0065/uat/crdbatch_secret-8WP3Bj",
+      "ENV":"uat",
+      "sn_account":"ivz_uat",
+      "CRD_ASOF_CAA":"oms-crdapi-adapter-craob-services"
+    },
+    "prd":{
+      "IMFT_URL":"securedata-uat.ops.invesco.net",
+      "AWS_ACCOUNT_CODE":"342122720323",
+      "AWS_SECRET_MANAGER":"/0065/prd/crdbatch_secret-EvCEZa",
+      "ENV":"prd",
+      "sn_account":"ivz_prod",
+      "CRD_ASOF_CAA":"oms-crdapi-adapter-craob-services"
+    }
+  }, 
+  "Memory_Size": 10240
+}

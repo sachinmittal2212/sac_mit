@@ -1,0 +1,101 @@
+image: python:3.7.4-alpine3.10
+
+definitions:
+  steps:
+    - step: &createImage
+        name: build image
+        image:
+          name: python:3.7.3
+        caches:
+          - docker
+        services:
+          - docker
+        script: # build an image
+          - export image_repo_name=ivz-0065-crd-scheduler-lambda-image
+          - ls -ltr
+          - sh pypi-token-changes.sh ${JFROG_PYPI_USERNAME} ${JFROG_PYPI_ACCESSTOKEN}
+          - pip3 install awscli
+          - aws --version
+          - aws sts get-caller-identity
+          - acctid=$AWS_ACCOUNT_CODE #(aws sts get-caller-identity --query "Account"|sed 's/\"//g')
+          - export acctid
+          - echo $acctid
+          - >
+            set +e;
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $acctid.dkr.ecr.us-east-1.amazonaws.com; 
+            docker pull $acctid.dkr.ecr.us-east-1.amazonaws.com/ivz-0065-crd-scheduler-lambda-image:1.0;
+            set -e
+          - docker login -u $ARTIFACTORY_USER -p $ARTIFACTORY_PASSWORD docker.artifactory.invesco.com
+          - docker build -t $image_repo_name . --build-arg APPLICATIONNAME="CRD Batch - Generic Framework" --build-arg ARTIFACTORY_USER=$JFROG_PYPI_USERNAME --build-arg ARTIFACTORY_PASSWORD=$JFROG_PYPI_ACCESSTOKEN --build-arg HOSTNAME=ivzdso  --build-arg ACCOUNTNAME="Event Poller" # --build-arg ACCESSKEY=${appd_accesskey}
+          - docker images
+          #- docker save --output temp-image.tar $image_repo_name
+        #artifact
+          #- temp-image.tar
+
+    #- step: &pushImage
+        #name: upload deployment config, push image
+        #image:
+        #  name: python:3.7.4-alpine3.10
+        #caches:
+        #  - docker
+        #services:
+        #  - docker
+        #script: 
+          - echo "------------------------ pushing image to ECR ------------------------"  
+          - export AppEnv=$AppEnv
+          - echo "environment is $AppEnv"
+          #- ls -ltr          
+          #- pip3 install awscli
+          #- docker load --input ./temp-image.tar
+          #- docker images
+          #- export image_repo_name=ivz-0067-ifc-api-iddaccts-lambda-image
+          - export IMAGE_NAME=ivz-0065-crd-scheduler-lambda-image:latest
+          #- source ./deployment/awscreds.sh
+          - >
+            set +e;
+            aws ecr describe-repositories --repository-names $image_repo_name 2> /dev/null;
+            repostatus=$?;
+            if [[ ! "$repostatus" -eq 0 ]]; then
+              echo "creating repository with name $image_repo_name";
+              aws ecr create-repository --repository-name $image_repo_name --region us-east-1 --tags Key=Domain,Value=0065 Key=AppEnv,Value=$AppEnv Key=ApplicationCI,Value="INFCD" Key=Owner,Value=Sachin.Mittal@invesco.com Key=Requester,Value=Sachin.Mittal@invesco.com Key=CostCenter,Value=7114NYC; 
+            else
+              echo "repository already exists with name $image_repo_name";   
+            fi; 
+            set -e;
+          - printenv 
+          - pipe: atlassian/aws-ecr-push-image:1.4.2
+            variables:
+              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+              AWS_DEFAULT_REGION: us-east-1
+              IMAGE_NAME: $image_repo_name
+              TAGS: 'latest release-${BITBUCKET_BUILD_NUMBER}'
+
+          - docker login -u $ARTIFACTORY_USER -p $ARTIFACTORY_PASSWORD docker.artifactory.invesco.com 
+          - pipe: ivzdso/deploy-cft-pipe:0.3.12 
+            variables:
+              AWS_DEFAULT_REGION: us-east-1
+              APPENV: $AppEnv
+              SERVICE: 'LAMBDA'
+              AWSACCTCODE: $acctid
+              CONFIG_FILE: config/config.yaml 
+              
+          - aws lambda update-function-code --function-name ivz-$AppEnv-0065-crd-scheduler-ue1 --image-uri $acctid.dkr.ecr.us-east-1.amazonaws.com/$image_repo_name:latest --region us-east-1 --publish
+              
+pipelines:
+  custom:
+    dev-deploy:
+      - step:
+          <<: *createImage
+          deployment: dev
+          name: dev - create image and lambda deployment
+    uat-deploy:
+      - step:
+          <<: *createImage
+          deployment: uat
+          name: uat - create image and lambda deployment
+    prd-deploy:
+      - step:
+          <<: *createImage
+          deployment: prd
+          name: prd - create image and lambda deployment
